@@ -29,6 +29,6 @@ router.post('/', function(req, res, next) {
 
 	console.log("afinn: " + score + ". senticon: " + score2);
 
-	res.send(score);
+	res.send({ result: score});
 })
 module.exports = router;
