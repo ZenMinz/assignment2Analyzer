@@ -19,13 +19,13 @@ router.get('/', function(req, res, next) {
 
 router.post('/', function(req, res, next) {
 	let text = req.body.text;
-	console.log(req.body);
+	//console.log(req.body);
 	let result = sentiment.analyze(text);
 	let arrayText = tokenizer.tokenize(text);
 	let score = analyzer.getSentiment(arrayText);
 	let score2 = analyzer2.getSentiment(arrayText);
 	let langauge = lngDetector.detect(text, 2);
-	console.log(langauge);
+	//console.log(langauge);
 
 	//console.log("afinn: " + score + ". senticon: " + score2);
 
