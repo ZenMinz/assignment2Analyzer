@@ -27,7 +27,7 @@ router.post('/', function(req, res, next) {
 	let langauge = lngDetector.detect(text, 2);
 	console.log(langauge);
 
-	console.log("afinn: " + score + ". senticon: " + score2);
+	//console.log("afinn: " + score + ". senticon: " + score2);
 
 	res.send({ result: score});
 })
