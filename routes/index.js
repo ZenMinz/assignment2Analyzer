@@ -16,19 +16,21 @@ router.get('/', function(req, res, next) {
 	res.send("test");
   //res.render('index', { title: 'Express' });
 });
-
+let totalResults = [];
 router.post('/', function(req, res, next) {
-	let text = req.body.text;
-	//console.log(req.body);
-	let result = sentiment.analyze(text);
-	let arrayText = tokenizer.tokenize(text);
-	let score = analyzer.getSentiment(arrayText);
-	let score2 = analyzer2.getSentiment(arrayText);
-	let langauge = lngDetector.detect(text, 2);
-	//console.log(langauge);
+	let textArray = JSON.parse(req.body.text);
+	//let results = [];
+	for (let i = 0; i < textArray.length; i++) {
+		let text = textArray[i];
+		let result = sentiment.analyze(text);
+		let arrayText = tokenizer.tokenize(text);
+		let score = analyzer.getSentiment(arrayText);
+		let score2 = analyzer2.getSentiment(arrayText);
+		let langauge = lngDetector.detect(text, 2);
+		totalResults.push(score);
+		console.log(score);
+	}
 
-	//console.log("afinn: " + score + ". senticon: " + score2);
-
-	res.send({ result: score});
+	//res.send({ result: score});
 })
 module.exports = router;
