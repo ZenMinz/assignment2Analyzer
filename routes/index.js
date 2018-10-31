@@ -27,10 +27,21 @@ router.post('/', function(req, res, next) {
 		let score = analyzer.getSentiment(arrayText);
 		let score2 = analyzer2.getSentiment(arrayText);
 		let langauge = lngDetector.detect(text, 2);
-		totalResults.push(score);
-		console.log(score);
-	}
+		if (score != 0) {
+			totalResults.push(score);
+			console.log(score);
+		}
 
+		
+	}
+	console.log(score);
 	//res.send({ result: score});
 })
+
+router.get('/results', function(req, res, next) {
+	console.log(totalResults.length);
+	let sendResults = JSON.stringify(totalResults);
+	res.send(sendResults);
+})
+
 module.exports = router;
