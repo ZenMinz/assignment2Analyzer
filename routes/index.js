@@ -72,7 +72,7 @@ function insertResults(results) {
 			if (err) {
 				console.log(err);
 			} else {
-				console.log("Saved!");
+				//console.log("Saved!");
 			}
 			client.close();
 		})
@@ -89,12 +89,7 @@ router.post('/', function(req, res, next) {
 		let score = analyzer.getSentiment(arrayText);
 		let score2 = analyzer2.getSentiment(arrayText);
 		let langauge = lngDetector.detect(text, 2);
-		//if (score != 0 || score) {
-		//	totalResults.push(score);
-		//	results.push(score);
-		//	insertResults(results);
-		//	console.log(score);
-		//}
+
 		if (score < 0) {
 			totalReaction[0].value += 3;
 		} else if (score > 0) {
@@ -103,9 +98,7 @@ router.post('/', function(req, res, next) {
 			totalReaction[2].value += 1;
 		}
 
-		insertResults(totalReaction);
-
-		
+		insertResults(totalReaction);	
 	}
 	} catch(e) {
 		console.log(e);
@@ -117,11 +110,13 @@ router.post('/', function(req, res, next) {
 router.get('/results', async function(req, res, next) {
 	//sendResults2 = JSON.stringify(sendResults2);
 	//sendResults2 = JSON.parse(sendResults2);
+	console.log("Server");
 	console.log(totalReaction);
 	console.log(totalResults.length);
 	let sendResults = JSON.stringify(totalReaction);
 	//insertResults(totalReaction);
 	let sendResults2 = await findResults();
+	console.log("database");
 	console.log(sendResults2);
 	res.send(sendResults2);
 })
