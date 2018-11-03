@@ -13,21 +13,20 @@ router.post('/input', function(req, res, next) {
 		let UID = req.body.UID;
 		functions.computeReactionsInternal(textArray, UID);
 	} catch(e) {
+		console.log(e);
 		res.sendCode(500);
 	}
 })
 
-router.post('/results', async function(req, res, next) {
+router.post('/results', function(req, res, next) {
 	try {
 		let UID = req.body.UID;
-		let sendResults = await functions.findResults(UID);
-		sendResults = functions.computeReactionsDatabase(sendResults);
-		sendResults = JSON.stringify(sendResults);
-		res.send(sendResults);
+		functions.findResults(UID, res);
 	} catch (e) {
+		console.log(e);
 		res.sendCode(500);
 	}
-
 })
+
 
 module.exports = router;
