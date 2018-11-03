@@ -5,7 +5,7 @@ var stemmer = require('natural').PorterStemmer;
 var analyzer = new Analyzer("English", stemmer, "afinn");
 var natural = require('natural');
 var tokenizer = new natural.WordTokenizer();
-
+var collectionName = 'analyzer2';
 
 //database
 var MongoClient = require('mongodb').MongoClient;
@@ -19,14 +19,16 @@ const findResults = function(UID, res) {
 			console.log("error findResults " + err);
 		} else {
 			var db = client.db('data');
-			var collection = db.collection('analyzer');
-			collection.find({'UID' : UID}).toArray(function(err, docs) {
+			var collection = db.collection(collectionName);
+			collection.find({'UID' : UID}, {timeout:false}).toArray(function(err, docs) {
 				client.close();
 				if (err) {
-					res.sendCode(500);
+					console.log(err);
+					res.sendStatus(500);
 				} else {
 					let sendResults = computeReactionsDatabase(docs);
 					sendResults = JSON.stringify(sendResults);
+					console.log(sendResults);
 					res.send(sendResults);
 				}
 
@@ -42,14 +44,14 @@ const insertResults = function(results, UID) {
 			console.log("error insertResults " + err);
 		}
 		var db = client.db('data');
-		var collection = db.collection('analyzer');
+		var collection = db.collection(collectionName);
 		results = [{label: "negative", value : results[0].value, color : "#ff4500", UID : UID},
 				 {label: "positive", value : results[1].value, color : "#1DA1F2", UID : UID},
 				 {label: "neutral", value : results[2].value, color : "#2f2f2f", UID : UID}];
 				 //console.log(results);
 		collection.insertMany(results, function(err, results) {
 			if (err) {
-				res.sendCode(500);
+				res.sendStatus(500);
 			} else {
 			}
 			client.close();

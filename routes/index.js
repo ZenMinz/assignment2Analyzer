@@ -12,9 +12,10 @@ router.post('/input', function(req, res, next) {
 		let textArray = JSON.parse(req.body.text);
 		let UID = req.body.UID;
 		functions.computeReactionsInternal(textArray, UID);
+		res.sendStatus(200);
 	} catch(e) {
 		console.log(e);
-		res.sendCode(500);
+		res.sendStatus(500);
 	}
 })
 
@@ -24,7 +25,7 @@ router.post('/results', function(req, res, next) {
 		functions.findResults(UID, res);
 	} catch (e) {
 		console.log(e);
-		res.sendCode(500);
+		res.sendStatus(500);
 	}
 })
 
