@@ -47,7 +47,7 @@ const insertResults = function(results, UID, res) {
 	MongoClient.connect(url, function(err, client) {
 		if (err) {
 			console.log("error insertResults " + err);
-		}
+		} else {
 		var db = client.db('data');
 		var collection = db.collection(collectionName);
 		results = {negative : results[0].value, positive : results[1].value, neutral : results[2].value, UID : UID};
@@ -59,6 +59,7 @@ const insertResults = function(results, UID, res) {
 			}
 			client.close();
 		})
+		}
 	})
 	} catch (e) {
 		console.log(e);
