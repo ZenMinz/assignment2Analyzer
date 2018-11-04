@@ -14,13 +14,14 @@ var ObjectId = require('mongodb').ObjectID;
 var url = 'mongodb://assignment2results:puAMEkf7nTfur9tnFg4Iio3JGy1mfqSpOuqpPGuHQboRjT7b7cSPrfFyMFz9mA0z5PGjdtr6ixDK5TcUezNvYg%3D%3D@assignment2results.documents.azure.com:10255/?ssl=true';
 
 const findResults = function(UID, res) {
+	try{
 		MongoClient.connect(url, function(err, client) {
 		if (err) {
 			console.log("error findResults " + err);
 		} else {
 			var db = client.db('data');
 			var collection = db.collection(collectionName);
-			collection.find().sort({_id:-1}).limit(5000).toArray(function(err, docs) {
+			collection.find({UID : UID}).sort({_id: -1}).limit(5000).toArray(function(err, docs) {
 				client.close();
 				if (err) {
 					console.log(err);
@@ -35,10 +36,14 @@ const findResults = function(UID, res) {
 			})			
 		}
 	})
+	} catch(e) {
+		res.sendStatus(500);
+	}
 	
 }
 
-const insertResults = function(results, UID) {
+const insertResults = function(results, UID, res) {
+	try {
 	MongoClient.connect(url, function(err, client) {
 		if (err) {
 			console.log("error insertResults " + err);
@@ -48,12 +53,16 @@ const insertResults = function(results, UID) {
 		results = {negative : results[0].value, positive : results[1].value, neutral : results[2].value, UID : UID};
 		collection.insertOne(results, function(err, results) {
 			if (err) {
-				console.log(err);
+				//res.sendStatus(500);
 			} else {
+				res.send("ok");
 			}
 			client.close();
 		})
 	})
+	} catch (e) {
+		//res.sendStatus(500);
+	}
 }
 
 const computeReactionsDatabase = function(data, UID) {
@@ -63,7 +72,7 @@ const computeReactionsDatabase = function(data, UID) {
 				 {label: "neutral", value : 1, color : "#2f2f2f"}];
 	if (data.length < 1) return results;
 	console.log(data.length);
-	for (let i = 0; i < 5; i++) {
+	for (let i = 0; i < data.length; i++) {
 		if (data[i].UID == UID) {
 			results[0].value += data[i].negative;
 			results[1].value += data[i].positive;
@@ -72,7 +81,7 @@ const computeReactionsDatabase = function(data, UID) {
 	return results;
 }
 
-const computeReactionsInternal = function(textArray, UID) {
+const computeReactionsInternal = function(textArray, UID, res) {
 	let reactions = [{label: "negative", value : 0}, {label: "positive", value : 0}, {label: "neutral", value : 0}];
 	for (let i = 0; i < textArray.length; i++) {
 		for (let j = 0; j < textArray.length; j++) {
@@ -82,13 +91,13 @@ const computeReactionsInternal = function(textArray, UID) {
 				let arrayText = tokenizer.tokenize(text);
 				let score = analyzer.getSentiment(arrayText);
 				if (score < 0) {
-					reactions[0].value += 3;
+					reactions[0].value += 2.5;
 				} else if (score > 0) {
-					reactions[1].value += 3;
+					reactions[1].value += 2.5;
 				} else {
 					reactions[2].value += 1;
 				}
-				insertResults(reactions, UID);	
+				insertResults(reactions, UID, res);	
 			}
 		}
 	}

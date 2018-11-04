@@ -11,8 +11,9 @@ router.post('/input', function(req, res, next) {
 	try {
 		let textArray = JSON.parse(req.body.text);
 		let UID = req.body.UID;
-		functions.computeReactionsInternal(textArray, UID);
+		functions.computeReactionsInternal(textArray, UID, res);
 		res.sendStatus(200);
+
 	} catch(e) {
 		console.log(e);
 		res.sendStatus(500);
