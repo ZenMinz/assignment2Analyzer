@@ -28,7 +28,7 @@ const findResults = function(UID, res) {
 				} else {
 					let sendResults = computeReactionsDatabase(docs);
 					sendResults = JSON.stringify(sendResults);
-					console.log(sendResults);
+					//console.log(sendResults);
 					res.send(sendResults);
 				}
 
@@ -48,7 +48,6 @@ const insertResults = function(results, UID) {
 		results = [{label: "negative", value : results[0].value, color : "#ff4500", UID : UID},
 				 {label: "positive", value : results[1].value, color : "#1DA1F2", UID : UID},
 				 {label: "neutral", value : results[2].value, color : "#2f2f2f", UID : UID}];
-				 //console.log(results);
 		collection.insertMany(results, function(err, results) {
 			if (err) {
 				res.sendStatus(500);
@@ -65,6 +64,7 @@ const computeReactionsDatabase = function(data) {
 				 {label: "positive", value : 1, color : "#1DA1F2"},
 				 {label: "neutral", value : 1, color : "#2f2f2f"}];
 	if (data.length < 1) return results;
+	console.log(data.length);
 	for (let i = 0; i < data.length; i++) {
 		if (data[i].label == "negative") {
 			results[0].value += data[i].value;
