@@ -17,7 +17,7 @@ const findResults = function(UID, res) {
 	try{
 		MongoClient.connect(url, function(err, client) {
 		if (err) {
-			console.log("error findResults " + err);
+			res.sendStatus(500);
 		} else {
 			var db = client.db('data');
 			var collection = db.collection(collectionName);
@@ -46,7 +46,7 @@ const insertResults = function(results, UID, res) {
 	try {
 	MongoClient.connect(url, function(err, client) {
 		if (err) {
-			console.log("error insertResults " + err);
+
 		} else {
 		var db = client.db('data');
 		var collection = db.collection(collectionName);
