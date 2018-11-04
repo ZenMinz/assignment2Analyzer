@@ -20,13 +20,13 @@ const findResults = function(UID, res) {
 		} else {
 			var db = client.db('data');
 			var collection = db.collection(collectionName);
-			collection.find({'UID' : UID}, {timeout:false}).toArray(function(err, docs) {
+			collection.find().sort({_id:-1}).limit(15000).toArray(function(err, docs) {
 				client.close();
 				if (err) {
 					console.log(err);
 					res.sendStatus(500);
 				} else {
-					let sendResults = computeReactionsDatabase(docs);
+					let sendResults = computeReactionsDatabase(docs, UID);
 					sendResults = JSON.stringify(sendResults);
 					//console.log(sendResults);
 					res.send(sendResults);
@@ -45,12 +45,10 @@ const insertResults = function(results, UID) {
 		}
 		var db = client.db('data');
 		var collection = db.collection(collectionName);
-		results = [{label: "negative", value : results[0].value, color : "#ff4500", UID : UID},
-				 {label: "positive", value : results[1].value, color : "#1DA1F2", UID : UID},
-				 {label: "neutral", value : results[2].value, color : "#2f2f2f", UID : UID}];
-		collection.insertMany(results, function(err, results) {
+		results = {negative : results[0].value, positive : results[1].value, neutral : results[2], UID : UID};
+		collection.insert(results, function(err, results) {
 			if (err) {
-				res.sendStatus(500);
+				console.log(err);
 			} else {
 			}
 			client.close();
@@ -58,7 +56,7 @@ const insertResults = function(results, UID) {
 	})
 }
 
-const computeReactionsDatabase = function(data) {
+const computeReactionsDatabase = function(data, UID) {
 	//console.log(data);
 	let results = [{label: "negative", value : 1, color : "#ff4500"},
 				 {label: "positive", value : 1, color : "#1DA1F2"},
@@ -66,19 +64,15 @@ const computeReactionsDatabase = function(data) {
 	if (data.length < 1) return results;
 	console.log(data.length);
 	for (let i = 0; i < data.length; i++) {
-		if (data[i].label == "negative") {
-			results[0].value += data[i].value;
-		} else if (data[i].label == "positive") {
-			results[1].value += data[i].value;
-		} else {
-			results[2].value += data[i].value;
-		}
-	}
+		if (data[i].UID == UID) {
+			results[0].value += data[i].negative;
+			results[1].value += data[i].positive;
+			results[2].value += data[i].neutral;
+	}}
 	return results;
 }
 
 const computeReactionsInternal = function(textArray, UID) {
-	//console.log(textArray);
 	let reactions = [{label: "negative", value : 0}, {label: "positive", value : 0}, {label: "neutral", value : 0}];
 	for (let i = 0; i < textArray.length; i++) {
 		let text = textArray[i];
