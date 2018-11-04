@@ -45,7 +45,7 @@ const insertResults = function(results, UID) {
 		}
 		var db = client.db('data');
 		var collection = db.collection(collectionName);
-		results = {negative : results[0].value, positive : results[1].value, neutral : results[2], UID : UID};
+		results = {negative : results[0].value, positive : results[1].value, neutral : results[2].value, UID : UID};
 		collection.insert(results, function(err, results) {
 			if (err) {
 				console.log(err);
@@ -75,20 +75,22 @@ const computeReactionsDatabase = function(data, UID) {
 const computeReactionsInternal = function(textArray, UID) {
 	let reactions = [{label: "negative", value : 0}, {label: "positive", value : 0}, {label: "neutral", value : 0}];
 	for (let i = 0; i < textArray.length; i++) {
-		let text = textArray[i];
-		if (text) {
-			let arrayText = tokenizer.tokenize(text);
-			let score = analyzer.getSentiment(arrayText);
-			if (score < 0) {
-				reactions[0].value += 3;
-			} else if (score > 0) {
-				reactions[1].value += 3;
-			} else {
-				reactions[2].value += 1;
+		for (let j = 0; j < textArray.length; j++) {
+			let text = textArray[i];
+			console.log(text);
+			if (text) {
+				let arrayText = tokenizer.tokenize(text);
+				let score = analyzer.getSentiment(arrayText);
+				if (score < 0) {
+					reactions[0].value += 3;
+				} else if (score > 0) {
+					reactions[1].value += 3;
+				} else {
+					reactions[2].value += 1;
+				}
+				insertResults(reactions, UID);	
 			}
-			insertResults(reactions, UID);	
 		}
-
 	}
 }
 
