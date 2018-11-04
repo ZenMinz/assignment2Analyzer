@@ -20,7 +20,7 @@ const findResults = function(UID, res) {
 		} else {
 			var db = client.db('data');
 			var collection = db.collection(collectionName);
-			collection.find().sort({_id:-1}).limit(15000).toArray(function(err, docs) {
+			collection.find().sort({_id:-1}).limit(5000).toArray(function(err, docs) {
 				client.close();
 				if (err) {
 					console.log(err);
@@ -28,7 +28,7 @@ const findResults = function(UID, res) {
 				} else {
 					let sendResults = computeReactionsDatabase(docs, UID);
 					sendResults = JSON.stringify(sendResults);
-					//console.log(sendResults);
+					console.log(sendResults);
 					res.send(sendResults);
 				}
 
@@ -46,7 +46,7 @@ const insertResults = function(results, UID) {
 		var db = client.db('data');
 		var collection = db.collection(collectionName);
 		results = {negative : results[0].value, positive : results[1].value, neutral : results[2].value, UID : UID};
-		collection.insert(results, function(err, results) {
+		collection.insertOne(results, function(err, results) {
 			if (err) {
 				console.log(err);
 			} else {
@@ -63,7 +63,7 @@ const computeReactionsDatabase = function(data, UID) {
 				 {label: "neutral", value : 1, color : "#2f2f2f"}];
 	if (data.length < 1) return results;
 	console.log(data.length);
-	for (let i = 0; i < data.length; i++) {
+	for (let i = 0; i < 5; i++) {
 		if (data[i].UID == UID) {
 			results[0].value += data[i].negative;
 			results[1].value += data[i].positive;
@@ -77,7 +77,7 @@ const computeReactionsInternal = function(textArray, UID) {
 	for (let i = 0; i < textArray.length; i++) {
 		for (let j = 0; j < textArray.length; j++) {
 			let text = textArray[i];
-			console.log(text);
+			//console.log(text);
 			if (text) {
 				let arrayText = tokenizer.tokenize(text);
 				let score = analyzer.getSentiment(arrayText);
@@ -92,6 +92,7 @@ const computeReactionsInternal = function(textArray, UID) {
 			}
 		}
 	}
+	console.log("done");
 }
 
 module.exports = {
