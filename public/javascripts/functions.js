@@ -98,10 +98,11 @@ const computeReactionsInternal = function(textArray, UID, res) {
 				} else {
 					reactions[2].value += 1;
 				}
-				insertResults(reactions, UID, res);	
+				
 			}
 		}
 	}
+	insertResults(reactions, UID, res);	
 	console.log("done");
 }
 
