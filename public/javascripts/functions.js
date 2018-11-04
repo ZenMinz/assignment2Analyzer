@@ -53,15 +53,15 @@ const insertResults = function(results, UID, res) {
 		results = {negative : results[0].value, positive : results[1].value, neutral : results[2].value, UID : UID};
 		collection.insertOne(results, function(err, results) {
 			if (err) {
-				//res.sendStatus(500);
+				console.log(err);
 			} else {
-				res.send("ok");
+
 			}
 			client.close();
 		})
 	})
 	} catch (e) {
-		//res.sendStatus(500);
+		console.log(e);
 	}
 }
 
