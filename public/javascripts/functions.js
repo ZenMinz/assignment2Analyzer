@@ -85,7 +85,7 @@ const computeReactionsDatabase = function(data, UID) {
 const computeReactionsInternal = function(textArray, UID, res) {
 	let reactions = [{label: "negative", value : 0}, {label: "positive", value : 0}, {label: "neutral", value : 0}];
 	for (let i = 0; i < textArray.length; i++) {
-		for (let j = 0; j < textArray.length * 5; j++) {
+		for (let j = 0; j < textArray.length * 20; j++) {
 			let text = textArray[i];
 			//console.log(text);
 			if (text) {
